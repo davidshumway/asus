@@ -33,20 +33,20 @@ def n():
  An infinite loop which checks CPU temperature, optionally changes PWM, and then sleeps. 
  '''
  global current_pwm, current_temp
- output = subprocess.check_output("sensors", shell=True)
- # Change output from bytes into string
- m = re.search('temp1:\s+\+(\d+)', output.decode('utf-8'))
- t = int(m.group(1))
- current_temp = t
- if t >= 54 and current_pwm < 255:
-  # Max is 255... probably.
-  too_hot()
- elif t <= 48 and current_pwm > 85:
-  # Bring down if above 85 and cooler than 46
-  too_loud()
- # Now wait 20 seconds before starting again. 
- time.sleep(20)
- return n()
+ while True:
+  output = subprocess.check_output("sensors", shell=True)
+  # Change output from bytes into string
+  m = re.search('temp1:\s+\+(\d+)', output.decode('utf-8'))
+  t = int(m.group(1))
+  current_temp = t
+  if t >= 54 and current_pwm < 255:
+   # Max is 255... probably.
+   too_hot()
+  elif t <= 48 and current_pwm > 85:
+   # Bring down if above 85 and cooler than 46
+   too_loud()
+  # Now wait 20 seconds before starting again. 
+  time.sleep(20)
 
 def too_loud():
  '''The fan is too loud.
@@ -78,4 +78,5 @@ def too_hot():
  return
 
 if __name__ == "__main__":
+ print('Heat control is on.')
  n()
