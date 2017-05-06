@@ -32,24 +32,52 @@ current_temp = 0
 # Max hot and min cold.
 MAX_HOT = 50
 MIN_COLD = 46
+PWM_OVER_70 = 255 # 255 is maximum but it is loud.
+PWM_OVER_60 = 220 # This says 60 but it is actually 58 in order to run cooler sooner.
+PWM_OVER_50 = 120 #
+TIME_TO_SLEEP = 2
+# Tend toward three settings.
+# High: If it is 55+,   go toward 255 until it is below 55
+# Mid:  If it is 50-55, go toward 120 (medium).
+# Low:  If it is -49,   go toward 85 (min).
 
 def n():
  """An infinite loop which checks CPU temperature, optionally changes PWM, and then sleeps."""
- global current_pwm, current_temp, MAX_HOT, MIN_COLD
+ global current_pwm, current_temp
+ global MAX_HOT, MIN_COLD, MAX_PWM, TIME_TO_SLEEP
+ global PWM_OVER_70
+ global PWM_OVER_60
+ global PWM_OVER_50
  while True:
   output = subprocess.check_output("sensors", shell=True)
   # Change output from bytes into string
   m = re.search('temp1:\s+\+(\d+)', output.decode('utf-8'))
   t = int(m.group(1))
   current_temp = t
-  if t >= MAX_HOT and current_pwm < 255:
-   # Max is 255... probably.
+  if   t > 70  and current_pwm <  PWM_OVER_70:
    too_hot()
-  elif t <= MIN_COLD and current_pwm > 85:
-   # Bring down if above 85 and cooler than 46
+  elif t <= 70 and current_pwm >= PWM_OVER_70:
    too_loud()
+  elif t > 58  and current_pwm <  PWM_OVER_60:
+   too_hot()
+  elif t <= 58 and current_pwm >= PWM_OVER_60:
+   too_loud()
+  elif t > 50  and current_pwm <  PWM_OVER_50:
+   too_hot()
+  elif t <= 50 and current_pwm >  85:
+   #current_pwm >= PWM_OVER_50 and current_pwm > 85:
+   # Do not go below 85
+   too_loud()
+  #elif t <= 50 and current_pwm > 85:
+  # too_loud()
+#  if t >= MAX_HOT and current_pwm < MAX_PWM:
+#   # Max is 255... probably.
+#   too_hot()
+#  elif t <= MIN_COLD and current_pwm > 85:
+#   # Bring down if above 85 and cooler than 46
+#   too_loud()
   # Now wait 20 seconds before starting again. 
-  time.sleep(20)
+  time.sleep(TIME_TO_SLEEP)
 
 def too_loud():
  """The fan is too loud.
