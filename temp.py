@@ -33,7 +33,7 @@ current_temp = 0
 MAX_HOT = 50
 MIN_COLD = 46
 PWM_OVER_70 = 255 # 255 is maximum but it is loud.
-PWM_OVER_60 = 220 # This says 60 but it is actually 58 in order to run cooler sooner.
+PWM_OVER_60 = 220 # This says 60 but is actually 58 in order to run cooler sooner.
 PWM_OVER_50 = 120 #
 TIME_TO_SLEEP = 2
 # Tend toward three settings.
