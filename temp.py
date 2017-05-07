@@ -68,14 +68,6 @@ def n():
    #current_pwm >= PWM_OVER_50 and current_pwm > 85:
    # Do not go below 85
    too_loud()
-  #elif t <= 50 and current_pwm > 85:
-  # too_loud()
-#  if t >= MAX_HOT and current_pwm < MAX_PWM:
-#   # Max is 255... probably.
-#   too_hot()
-#  elif t <= MIN_COLD and current_pwm > 85:
-#   # Bring down if above 85 and cooler than 46
-#   too_loud()
   # Now wait 20 seconds before starting again. 
   time.sleep(TIME_TO_SLEEP)
 
@@ -104,8 +96,8 @@ def too_hot():
  output = subprocess.check_output(
   "echo " + str(current_pwm) +" > "+ pwm1,
   shell=True)
- # Make a ding.
- print('\a')
+ ## Make a ding.
+ ## print('\a')
  return
 
 if __name__ == "__main__":
