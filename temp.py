@@ -33,16 +33,19 @@ current_temp = 0
 MAX_HOT = 50
 MIN_COLD = 46
 PWM_OVER_70 = 255 # 255 is maximum but it is loud.
-PWM_OVER_60 = 220 # This says 60 but is actually 58 in order to run cooler sooner.
-PWM_OVER_50 = 120 #
-TIME_TO_SLEEP = 2
+PWM_OVER_60 = 220 # This says 60 but is actually ...
+PWM_OVER_50 = 110 # Actually goes down to 48.
+TIME_TO_SLEEP = 1
 # Tend toward three settings.
 # High: If it is 55+,   go toward 255 until it is below 55
 # Mid:  If it is 50-55, go toward 120 (medium).
 # Low:  If it is -49,   go toward 85 (min).
 
 def n():
- """An infinite loop which checks CPU temperature, optionally changes PWM, and then sleeps."""
+ """An infinite loop which checks CPU temperature, optionally changes PWM, and then sleeps.
+ 
+ Always wait an additional 4 seconds when cooling down.
+ """
  global current_pwm, current_temp
  global MAX_HOT, MIN_COLD, MAX_PWM, TIME_TO_SLEEP
  global PWM_OVER_70
@@ -58,16 +61,17 @@ def n():
    too_hot()
   elif t <= 70 and current_pwm >= PWM_OVER_70:
    too_loud()
-  elif t > 58  and current_pwm <  PWM_OVER_60:
+   time.sleep(2)
+  elif t > 60  and current_pwm <  PWM_OVER_60: #62
    too_hot()
-  elif t <= 58 and current_pwm >= PWM_OVER_60:
+  elif t <= 60 and current_pwm >= PWM_OVER_50:
    too_loud()
-  elif t > 50  and current_pwm <  PWM_OVER_50:
+   time.sleep(2)
+  elif t > 48  and current_pwm <  PWM_OVER_50:
    too_hot()
-  elif t <= 50 and current_pwm >  85:
-   #current_pwm >= PWM_OVER_50 and current_pwm > 85:
-   # Do not go below 85
+  elif t <= 48 and current_pwm >= 80:
    too_loud()
+   time.sleep(2)
   # Now wait 20 seconds before starting again. 
   time.sleep(TIME_TO_SLEEP)
 
