@@ -34,7 +34,7 @@ MAX_HOT = 50
 MIN_COLD = 46
 PWM_OVER_70 = 255 # 255 is maximum but it is loud.
 PWM_OVER_60 = 220 # This says 60 but is actually ...
-PWM_OVER_50 = 110 # Actually goes down to 48.
+PWM_OVER_50 = 120 # Actually goes down to 48.
 TIME_TO_SLEEP = 1
 # Tend toward three settings.
 # High: If it is 55+,   go toward 255 until it is below 55
@@ -64,12 +64,12 @@ def n():
    time.sleep(2)
   elif t > 60  and current_pwm <  PWM_OVER_60: #62
    too_hot()
-  elif t <= 60 and current_pwm >= PWM_OVER_50:
+  elif t <= 60 and current_pwm >= PWM_OVER_60:
    too_loud()
    time.sleep(2)
   elif t > 48  and current_pwm <  PWM_OVER_50:
    too_hot()
-  elif t <= 48 and current_pwm >= 80:
+  elif t <= 48 and current_pwm >= 90:
    too_loud()
    time.sleep(2)
   # Now wait 20 seconds before starting again. 
