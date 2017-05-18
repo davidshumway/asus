@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 """Usage: `sudo ./temp.py`.
 
-Description: Checks temperature. When temperature is above 54C,
-increases PWM by 10. When temperature is below 48C, decreases
-PWM by 10. After this, sleep for 20 seconds before again
-checking the temperature.
+Description: Changes fan speed based on temperature.
+Three levels of fan speed.
+High: Very hot. Full speed.
+Medium: Hot. Go to near full speed.
+Low: Moderate. Stay just above audible range.
+Off: Cool. Stay at minimum PWM, pretty much below audible range.
 """
 
 import re
@@ -25,7 +27,7 @@ else:
 # From then on, assume that current pwm is
 # whatever value is currently saved into
 # global variable current_pwm.
-current_pwm = 85
+current_pwm = 105
 current_temp = 0
 
 # Set these values.
@@ -34,12 +36,13 @@ MAX_HOT = 50
 MIN_COLD = 46
 PWM_OVER_70 = 255 # 255 is maximum but it is loud.
 PWM_OVER_60 = 220 # This says 60 but is actually ...
-PWM_OVER_50 = 120 # Actually goes down to 48.
+PWM_OVER_50 = 130 # Actually goes down to 48.
 TIME_TO_SLEEP = 1
 # Tend toward three settings.
-# High: If it is 55+,   go toward 255 until it is below 55
-# Mid:  If it is 50-55, go toward 120 (medium).
-# Low:  If it is -49,   go toward 85 (min).
+# High: If it is 70+,   go toward 255.
+# Mid:  If it is 60-70, go toward 220.
+# Low:  If it is 50-60, go toward 130.
+# None: Goes toward 105.
 
 def n():
  """An infinite loop which checks CPU temperature, optionally changes PWM, and then sleeps.
@@ -69,7 +72,7 @@ def n():
    time.sleep(2)
   elif t > 48  and current_pwm <  PWM_OVER_50:
    too_hot()
-  elif t <= 48 and current_pwm >= 90:
+  elif t <= 48 and current_pwm > 105:
    too_loud()
    time.sleep(2)
   # Now wait 20 seconds before starting again. 
